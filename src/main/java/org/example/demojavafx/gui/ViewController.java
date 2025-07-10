@@ -1,54 +1,66 @@
 package org.example.demojavafx.gui;
 
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-
 import java.net.URL;
-import java.time.LocalDate;
-import java.util.Locale;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import org.example.demojavafx.gui.util.Alerts;
-import org.example.demojavafx.gui.util.Constraints;
+import org.example.demojavafx.model.entites.Person;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.util.Callback;
 
 public class ViewController implements Initializable {
 
     @FXML
-    private TextField txtNumber1;
+    private ComboBox<Person> comboBoxPerson;
 
     @FXML
-    private TextField txtNumber2;
+    private Button btnAll;
+
+    private ObservableList<Person> obsListPerson;
 
     @FXML
-    private Label lblResult;
+    public void onBtnAllAction() {
+        for (Person person : comboBoxPerson.getItems()) {
+            System.out.println(person);
+        }
+    }
 
     @FXML
-    private Button btSum;
-
-    @FXML
-    public void onBtSumAction() {
-        Locale.setDefault(Locale.US);
-        try {
-            Double number1 = Double.parseDouble(txtNumber1.getText());
-            Double number2 = Double.parseDouble(txtNumber2.getText());
-            Double sum = number1 + number2;
-            lblResult.setText(String.format("%.2f", sum));
-        } catch (NumberFormatException e) {
-            Alerts.showAlert("Error", "Invalid input", "Please enter valid numbers.", Alert.AlertType.ERROR);
+    public void onComboBoxPersonAction() {
+        Person selectedPerson = comboBoxPerson.getSelectionModel().getSelectedItem();
+        if (selectedPerson != null) {
+            System.out.println("Selected Person: " + selectedPerson);
+        } else {
+            System.out.println("No person selected.");
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Constraints.setTextFieldDouble(txtNumber1);
-        Constraints.setTextFieldDouble(txtNumber2);
-        Constraints.setTextFieldMaxLength(txtNumber1, 12);
-        Constraints.setTextFieldMaxLength(txtNumber2, 12);
-    }
+        List<Person> list = List.of(
+                new Person(1, "Alice", "alice@gmail.com"),
+                new Person(2, "Bob", "bob@gmail.com"),
+                new Person(3, "Charlie", "charlie@gmail.com"));
+        obsListPerson = FXCollections.observableArrayList(list);
+        comboBoxPerson.setItems(obsListPerson);
 
+        Callback<ListView<Person>, ListCell<Person>> factory = lv -> new ListCell<Person>() {
+            @Override
+            protected void updateItem(Person item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? "" : item.getName());
+            }
+        };
+        comboBoxPerson.setCellFactory(factory);
+        comboBoxPerson.setButtonCell(factory.call(null));
+    }
 
 }
