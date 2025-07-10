@@ -1,17 +1,21 @@
 package org.example.demojavafx.gui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.example.demojavafx.gui.util.Alerts;
+import org.example.demojavafx.gui.util.Constraints;
 
-public class ViewController {
+public class ViewController implements Initializable {
 
     @FXML
     private TextField txtNumber1;
@@ -36,6 +40,14 @@ public class ViewController {
         } catch (NumberFormatException e) {
             Alerts.showAlert("Error", "Invalid input", "Please enter valid numbers.", Alert.AlertType.ERROR);
         }
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        Constraints.setTextFieldDouble(txtNumber1);
+        Constraints.setTextFieldDouble(txtNumber2);
+        Constraints.setTextFieldMaxLength(txtNumber1, 12);
+        Constraints.setTextFieldMaxLength(txtNumber2, 12);
     }
 
 
